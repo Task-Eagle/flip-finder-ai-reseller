@@ -43,6 +43,10 @@
       cursor: pointer;
       color: black;
       font-weight: bold;
+      display: block; /* Ensures buttons stack vertically */
+      margin: 10px auto; /* Centers the button */
+      width: 100%;
+      max-width: 250px;
     }
 
     button:hover { background: #16a34a; }
@@ -63,7 +67,9 @@
       padding: 25px;
       border-radius: 10px;
       max-width: 380px;
-      text-align: left;
+      width: 90%;
+      text-align: center; /* Changed to center for better layout control */
+      position: relative;
     }
 
     input {
@@ -73,6 +79,7 @@
       margin-bottom: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
 
     .secondary-btn {
@@ -85,8 +92,19 @@
     .note {
       font-size: 0.8rem;
       color: #666;
-      margin-top: 8px;
+      margin-top: 15px;
       text-align: center;
+      display: none; /* Hidden initially, shown only in final state if needed, or kept hidden */
+    }
+    
+    /* Ensure the Try Scanning button is prominent */
+    #tryScanningBtn {
+      margin-top: 20px;
+      background: #2563eb; /* Blue to differentiate */
+      color: white;
+    }
+    #tryScanningBtn:hover {
+      background: #1d4ed8;
     }
   </style>
 </head>
@@ -94,35 +112,36 @@
 <body>
 
 <div class="container">
-  <h1>Know if an item is worth flipping in seconds</h1>
+  <h1><strong>📷</strong></h1>
+  <h1>Know if an item is worth flipping in less than 5 seconds!</h1>
   <p>Scan or enter an item → get estimated buy & sell price instantly.</p>
-  <button onclick="openModal()">Scan Item</button>
+  <button onclick="openModal()">Scan Item 📸</button>
 </div>
 
 <div class="modal" id="modal">
   <div class="modal-content">
-    <h2>🚧 In Testing</h2>
+    <h2 id="modalTitle">🚧 In Development</h2>
 
-    <p>We're currently testing this feature with early users.</p>
+    <p id="modalIntro">We're currently testing this feature with early users.</p>
 
-    <p>This tool will help you:</p>
-    <ul>
+    <p id="modalFeaturesTitle">This tool will help you:</p>
+    <ul id="modalFeaturesList">
       <li>Identify items instantly</li>
       <li>Estimate resale value</li>
       <li>Know the best max buy price</li>
     </ul>
 
-    <p>Want early access when it's ready?</p>
+    <p id="modalQuestion">Want early access when it's ready? We'll notify you by email.</p>
 
     <input type="email" placeholder="Enter email (optional)" id="email">
 
-    <button onclick="submitEmail()">Notify me</button>
-    <button class="secondary-btn" onclick="redirectToLink()">See it in Action!</button>
+    <button id="btnNotify" onclick="submitEmail()">Notify me</button>
+    <button id="btnExploring" class="secondary-btn" onclick="redirectToLink()">Just exploring</button>
 
     <!-- New hidden button -->
     <button id="tryScanningBtn" style="display: none;" onclick="redirectToLink()">Try Scanning</button>
 
-    <div class="note">Built for resellers — feedback welcome. My email: taskeagle313@proton.me</div>
+    <div class="note" id="modalNote">Built for resellers — feedback welcome. My email: taskeagle313@proton.me</div>
   </div>
 </div>
 
@@ -172,23 +191,34 @@
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ email: email })
-    });
+    }).catch(err => console.error("Formspree error:", err));
 
-    // Hide the original buttons
-    document.querySelector('button[onclick="submitEmail()"]').style.display = 'none';
-    document.querySelector('button[onclick="redirectToLink()"]').style.display = 'none';
+    // --- UI TRANSITION LOGIC ---
     
-    // Hide original content elements
-    document.querySelector('.modal-content p:nth-of-type(2)').style.display = 'none';
-    document.querySelector('.modal-content ul').style.display = 'none';
-    document.querySelector('.modal-content p:nth-of-type(4)').style.display = 'none';
-    document.querySelector('#email').style.display = 'none';
+    // 1. Hide the original buttons
+    document.getElementById('btnNotify').style.display = 'none';
+    document.getElementById('btnExploring').style.display = 'none';
+
+    // 2. Hide the email input
+    document.getElementById('email').style.display = 'none';
+
+    // 3. Hide the introductory text and list
+    document.getElementById('modalIntro').style.display = 'none';
+    document.getElementById('modalFeaturesTitle').style.display = 'none';
+    document.getElementById('modalFeaturesList').style.display = 'none';
+    document.getElementById('modalQuestion').style.display = 'none';
     
-    // Update the message
-    document.querySelector('.modal-content p:first-of-type').textContent = "Thanks! You'll get early access.";
+    // 4. Update the title/message
+    document.getElementById('modalTitle').textContent = "Thanks!";
+    document.getElementById('modalIntro').textContent = "You'll get early access soon.";
+    document.getElementById('modalIntro').style.display = 'block'; // Re-show as the new message
+
+    // 5. Show the "Try Scanning" button
+    const tryBtn = document.getElementById('tryScanningBtn');
+    tryBtn.style.display = 'block';
     
-    // Show the new "Try Scanning" button
-    document.getElementById('tryScanningBtn').style.display = 'block';
+    // Optional: Hide the note footer if you want a cleaner look
+    document.getElementById('modalNote').style.display = 'none';
   }
 </script>
 
