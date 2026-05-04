@@ -103,7 +103,7 @@
   <div class="modal-content">
     <h2>🚧 In Testing</h2>
 
-    <p>We’re currently testing this feature with early users.</p>
+    <p>We're currently testing this feature with early users.</p>
 
     <p>This tool will help you:</p>
     <ul>
@@ -112,12 +112,15 @@
       <li>Know the best max buy price</li>
     </ul>
 
-    <p>Want early access when it’s ready?</p>
+    <p>Want early access when it's ready?</p>
 
     <input type="email" placeholder="Enter email (optional)" id="email">
 
     <button onclick="submitEmail()">Notify me</button>
-    <button class="secondary-btn" onclick="closeModal()">Just exploring</button>
+    <button class="secondary-btn" onclick="redirectToLink()">Just exploring</button>
+
+    <!-- New hidden button -->
+    <button id="tryScanningBtn" style="display: none;" onclick="redirectToLink()">Try Scanning</button>
 
     <div class="note">Built for resellers — feedback welcome. My email: taskeagle313@proton.me</div>
   </div>
@@ -142,9 +145,27 @@
     });
   }
 
+  function redirectToLink() {
+    // Track the click event before redirecting
+    gtag('event', 'exploring_click', {
+      event_category: 'engagement',
+      event_label: 'just_exploring_button'
+    });
+    
+    // Redirect to your specified link
+    window.location.href = "https://flip-finder-ai.preview.static.emergentagent.com/login"; // Replace XXXXX with your actual URL
+  }
+
   function submitEmail() {
     const email = document.getElementById('email').value;
 
+    // Track the email submission
+    gtag('event', 'email_submit', {
+      event_category: 'conversion',
+      event_label: 'early_access_signup'
+    });
+
+    // Send email via Formspree
     fetch("https://formspree.io/f/xpqbpveb", {
       method: "POST",
       headers: {
@@ -153,13 +174,21 @@
       body: JSON.stringify({ email: email })
     });
 
-    gtag('event', 'email_submit', {
-      event_category: 'conversion',
-      event_label: 'early_access_signup'
-    });
-
-    alert("Thanks! You'll get early access.");
-    closeModal();
+    // Hide the original buttons
+    document.querySelector('button[onclick="submitEmail()"]').style.display = 'none';
+    document.querySelector('button[onclick="redirectToLink()"]').style.display = 'none';
+    
+    // Hide original content elements
+    document.querySelector('.modal-content p:nth-of-type(2)').style.display = 'none';
+    document.querySelector('.modal-content ul').style.display = 'none';
+    document.querySelector('.modal-content p:nth-of-type(4)').style.display = 'none';
+    document.querySelector('#email').style.display = 'none';
+    
+    // Update the message
+    document.querySelector('.modal-content p:first-of-type').textContent = "Thanks! You'll get early access.";
+    
+    // Show the new "Try Scanning" button
+    document.getElementById('tryScanningBtn').style.display = 'block';
   }
 </script>
 
