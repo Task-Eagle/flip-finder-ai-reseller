@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FlipFinder AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BSSFWEC81G"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-BSSFWEC81G'); // 🔁 replace with your GA4 ID
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .container { max-width: 500px; padding: 20px; }
+
+    h1 { font-size: 2.2rem; margin-bottom: 10px; }
+
+    p { color: #cbd5f5; margin-bottom: 30px; }
+
+    button {
+      background: #22c55e;
+      border: none;
+      padding: 15px 25px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      color: black;
+      font-weight: bold;
+    }
+
+    button:hover { background: #16a34a; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      color: black;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 380px;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .secondary-btn {
+      background: transparent;
+      border: 1px solid #ccc;
+      color: #333;
+      margin-top: 8px;
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Know if an item is worth flipping in seconds</h1>
+  <p>Scan or enter an item → get estimated buy & sell price instantly.</p>
+  <button onclick="openModal()">Scan Item</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>🚧 In Testing</h2>
+
+    <p>We’re currently testing this feature with early users.</p>
+
+    <p>This tool will help you:</p>
+    <ul>
+      <li>Identify items instantly</li>
+      <li>Estimate resale value</li>
+      <li>Know the best max buy price</li>
+    </ul>
+
+    <p>Want early access when it’s ready?</p>
+
+    <input type="email" placeholder="Enter email (optional)" id="email">
+
+    <button onclick="submitEmail()">Notify me</button>
+    <button class="secondary-btn" onclick="closeModal()">Just exploring</button>
+
+    <div class="note">Built for resellers — feedback welcome. My email: taskeagle313@proton.me</div>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('modal').style.display = 'flex';
+
+    // GA event: user intent to scan
+    gtag('event', 'scan_click', {
+      event_category: 'engagement',
+      event_label: 'scan_item_button'
+    });
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+
+    gtag('event', 'modal_close', {
+      event_category: 'engagement'
+    });
+  }
+
+  function submitEmail() {
+    const email = document.getElementById('email').value;
+
+    fetch("https://formspree.io/f/xpqbpveb", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email: email })
+    });
+
+    gtag('event', 'email_submit', {
+      event_category: 'conversion',
+      event_label: 'early_access_signup'
+    });
+
+    alert("Thanks! You'll get early access.");
+    closeModal();
+  }
+</script>
+
+</body>
+</html>
